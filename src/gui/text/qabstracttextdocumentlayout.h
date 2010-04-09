@@ -103,6 +103,8 @@ public:
     void registerHandler(int objectType, QObject *component);
     QTextObjectInterface *handlerForObject(int objectType) const;
 
+    virtual void setLineSpacing(int) {};
+
 Q_SIGNALS:
     void update(const QRectF & = QRectF(0., 0., 1000000000., 1000000000.));
     void updateBlock(const QTextBlock &block);

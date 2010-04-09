@@ -513,6 +513,8 @@ public:
 
     qreal scaleToDevice(qreal value) const;
     QFixed scaleToDevice(QFixed value) const;
+
+    int lineSpacing;
 };
 
 QTextDocumentLayoutPrivate::QTextDocumentLayoutPrivate()
@@ -526,6 +528,7 @@ QTextDocumentLayoutPrivate::QTextDocumentLayoutPrivate()
     insideDocumentChange = false;
     idealWidth = 0;
     contentHasAlignment = false;
+    lineSpacing = 0;
 }
 
 QTextFrame::Iterator QTextDocumentLayoutPrivate::frameIteratorForYPosition(QFixed y) const
@@ -2643,7 +2646,7 @@ void QTextDocumentLayoutPrivate::layoutBlock(const QTextBlock &bl, int blockPosi
 
             }
 
-            QFixed lineHeight = QFixed::fromReal(line.height());
+            QFixed lineHeight = QFixed::fromReal(line.height()) + this->lineSpacing;
             if (layoutStruct->pageHeight > 0 && layoutStruct->absoluteY() + lineHeight > layoutStruct->pageBottom) {
                 layoutStruct->newPage();
 
@@ -2676,7 +2679,7 @@ void QTextDocumentLayoutPrivate::layoutBlock(const QTextBlock &bl, int blockPosi
             QTextLine line = tl->lineAt(i);
             layoutStruct->contentsWidth
                 = qMax(layoutStruct->contentsWidth, QFixed::fromReal(line.x() + tl->lineAt(i).naturalTextWidth()) + totalRightMargin);
-            const QFixed lineHeight = QFixed::fromReal(line.height());
+            const QFixed lineHeight = QFixed::fromReal(line.height()) + this->lineSpacing;
             if (layoutStruct->pageHeight != QFIXED_MAX) {
                 if (layoutStruct->absoluteY() + lineHeight > layoutStruct->pageBottom)
                     layoutStruct->newPage();
@@ -2775,6 +2778,11 @@ QTextDocumentLayout::QTextDocumentLayout(QTextDocument *doc)
     registerHandler(QTextFormat::ImageObject, new QTextImageHandler(this));
 }
 
+void QTextDocumentLayout::setLineSpacing(int value)
+{
+    Q_D(QTextDocumentLayout);
+    d->lineSpacing = value;
+}
 
 void QTextDocumentLayout::draw(QPainter *painter, const PaintContext &context)
 {

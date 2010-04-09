@@ -102,6 +102,7 @@ public:
 
     bool contentHasAlignment() const;
 
+    virtual void setLineSpacing(int);
 protected:
     void documentChanged(int from, int oldLength, int length);
     void resizeInlineObject(QTextInlineObject item, int posInDocument, const QTextFormat &format);

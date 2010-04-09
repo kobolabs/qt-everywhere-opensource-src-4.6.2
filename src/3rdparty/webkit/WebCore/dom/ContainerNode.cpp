@@ -745,6 +745,8 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
             if (o->isText()) {
                 RenderText* text = toRenderText(o);
                 IntRect linesBox = text->linesBoundingBox();
+                if (linesBox.width()==0 && linesBox.height()==0 && linesBox.x() == 0 && linesBox.x() == 0)
+                    continue;
                 point.move(linesBox.x() + linesBox.width(), linesBox.y() + linesBox.height());
             } else {
                 RenderBox* box = toRenderBox(o);
