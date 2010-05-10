@@ -714,4 +714,9 @@ QString QSQLiteDriver::escapeIdentifier(const QString &identifier, IdentifierTyp
     return _q_escapeIdentifier(identifier);
 }
 
+void QSQLiteDriver::interrupt()
+{
+    sqlite3_interrupt(d->access);
+}
+
 QT_END_NAMESPACE
