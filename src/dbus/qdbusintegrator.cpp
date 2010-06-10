@@ -2051,6 +2051,7 @@ void QDBusConnectionPrivate::connectSignal(const QString &key, const SignalHook 
                     ++data.refcount;
                 } else {
                     // we need to watch for this service changing
+                    data.refcount = 1;
                     QString dbusServerService = QLatin1String(DBUS_SERVICE_DBUS);
                     connectSignal(dbusServerService, QString(), QLatin1String(DBUS_INTERFACE_DBUS),
                                   QLatin1String("NameOwnerChanged"), QStringList() << hook.service, QString(),
@@ -2105,19 +2106,6 @@ QDBusConnectionPrivate::disconnectSignal(SignalHookHash::Iterator &it)
 {
     const SignalHook &hook = it.value();
 
-    WatchedServicesHash::Iterator sit = watchedServices.find(hook.service);
-    if (sit != watchedServices.end()) {
-        if (sit.value().refcount == 1) {
-            watchedServices.erase(sit);
-            QString dbusServerService = QLatin1String(DBUS_SERVICE_DBUS);
-            disconnectSignal(dbusServerService, QString(), QLatin1String(DBUS_INTERFACE_DBUS),
-                          QLatin1String("NameOwnerChanged"), QStringList() << hook.service, QString(),
-                          this, SLOT(_q_serviceOwnerChanged(QString,QString,QString)));
-        } else {
-            --sit.value().refcount;
-        }
-    }
-
     bool erase = false;
     MatchRefCountHash::iterator i = matchRefCounts.find(hook.matchRule);
     if (i == matchRefCounts.end()) {
@@ -2129,6 +2117,22 @@ QDBusConnectionPrivate::disconnectSignal(SignalHookHash::Iterator &it)
         }
         else {
             i.value() = i.value() - 1;
+        }
+    }
+
+    if (erase)
+    {
+        WatchedServicesHash::Iterator sit = watchedServices.find(hook.service);
+        if (sit != watchedServices.end()) {
+            if (sit.value().refcount == 1) {
+                watchedServices.erase(sit);
+                QString dbusServerService = QLatin1String(DBUS_SERVICE_DBUS);
+                disconnectSignal(dbusServerService, QString(), QLatin1String(DBUS_INTERFACE_DBUS),
+                              QLatin1String("NameOwnerChanged"), QStringList() << hook.service, QString(),
+                              this, SLOT(_q_serviceOwnerChanged(QString,QString,QString)));
+            } else {
+                --sit.value().refcount;
+            }
         }
     }
 
