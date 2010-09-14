@@ -67,11 +67,13 @@
 #include "ProgressTracker.h"
 #include "RefPtr.h"
 #include "RenderTextControl.h"
+#include "RenderView.h"
 #include "TextIterator.h"
 #include "HashMap.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "WindowFeatures.h"
 #include "LocalizedStrings.h"
@@ -2172,6 +2174,35 @@ QString QWebPage::selectedText() const
 {
     d->createMainFrame();
     return d->page->focusController()->focusedOrMainFrame()->selectedText();
+}
+
+
+void QWebPage::selectWordAtPoint(QPoint docPoint, QRect bounds) {
+	d->createMainFrame();
+	Frame *frame = d->page->focusController()->focusedOrMainFrame();
+	IntPoint point(docPoint.x(),docPoint.y());
+	HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+	HitTestResult result(point);
+	frame->document()->renderView()->layer()->hitTest(request, result);
+	Node* innerNode = result.innerNode();
+	if (innerNode && innerNode->renderer()) {
+		VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
+		VisibleSelection newSelection;
+		if (pos.isNotNull()) {
+			newSelection = VisibleSelection(pos);
+			newSelection.expandUsingGranularity(WordGranularity);
+		}
+		if (newSelection.isRange()) {
+			frame->setSelectionGranularity(WordGranularity);
+
+		}
+		frame->selection()->setSelection(newSelection);
+	}
+}
+
+void QWebPage::clearSelection() {
+	Frame *frame = d->page->focusController()->focusedOrMainFrame();
+	frame->selection()->clear();
 }
 
 /*!
