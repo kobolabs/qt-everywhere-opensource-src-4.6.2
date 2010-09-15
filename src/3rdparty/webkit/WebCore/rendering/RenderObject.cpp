@@ -1346,7 +1346,9 @@ Color RenderObject::selectionBackgroundColor() const
     if (style()->userSelect() != SELECT_NONE) {
          RefPtr<RenderStyle> pseudoStyle = getUncachedPseudoStyle(SELECTION);
         if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
-            color = pseudoStyle->backgroundColor().blendWithWhite();
+			// HACK: we don't want this to be blended with white on the Nickel, because we want our selections
+			// to actually be white, instead of off-white
+            color = pseudoStyle->backgroundColor();//.blendWithWhite();
         else
             color = document()->frame()->selection()->isFocusedAndActive() ?
                     theme()->activeSelectionBackgroundColor() :
