@@ -375,10 +375,12 @@ void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run,
     if (paintingDisabled())
         return;
 
-	IntRect rect(font.selectionRectForText(run, point, h, from, to));
-	rect.setHeight(rect.height() - 1);
+	FloatRect rect(font.selectionRectForText(run, point, h, from, to));
+	rect.setY(rect.y() + rect.height() - 2);
+	rect.setHeight(2);
 	rect.setWidth(rect.width() - 1);
-	drawRect(rect);
+	Color color(0,0,0);
+	fillRect(rect, color);
 }
 
 void GraphicsContext::initFocusRing(int width, int offset)
