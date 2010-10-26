@@ -40,6 +40,7 @@
 #include "FormState.h"
 #include "ApplicationCacheStorage.h"
 #include "ChromeClientQt.h"
+#include "ClientRect.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "DocumentLoader.h"
@@ -2176,8 +2177,13 @@ QString QWebPage::selectedText() const
     return d->page->focusController()->focusedOrMainFrame()->selectedText();
 }
 
+int QWebPage::selectedWordHeight() const {
+	return (int)d->page->focusController()->focusedOrMainFrame()->selection()->toNormalizedRange().get()->getBoundingClientRect().get()->height();
+}
 
-void QWebPage::selectWordAtPoint(QPoint docPoint, QRect bounds) {
+//If selectOnlyLetters == true the selection will be modified to discard non letters.
+//This causes a performance hit though, so it should only be used for the final selecting
+void QWebPage::selectWordAtPoint(QPoint docPoint, QRect bounds, bool selectOnlyLetters) {
 	d->createMainFrame();
 	Frame *frame = d->page->focusController()->focusedOrMainFrame();
 	IntPoint point(docPoint.x(),docPoint.y());
@@ -2187,9 +2193,9 @@ void QWebPage::selectWordAtPoint(QPoint docPoint, QRect bounds) {
 	Node* innerNode = result.innerNode();
 	if (innerNode && innerNode->renderer()) {
 		VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
-		VisibleSelection newSelection;
+		VisibleSelection newSelection(selectOnlyLetters);
 		if (pos.isNotNull()) {
-			newSelection = VisibleSelection(pos);
+			newSelection = VisibleSelection(pos, selectOnlyLetters);
 			newSelection.expandUsingGranularity(WordGranularity);
 		}
 		if (newSelection.isRange()) {
