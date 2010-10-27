@@ -121,6 +121,7 @@ private:
 
 public:
     QWebPage *page() const;
+    QList<QRect> renderTreeRunRects();
 
     void load(const QUrl &url);
 #if QT_VERSION < 0x040400
