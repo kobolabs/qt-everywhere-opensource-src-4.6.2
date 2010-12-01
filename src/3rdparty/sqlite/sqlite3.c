@@ -48465,17 +48465,17 @@ SQLITE_PRIVATE void sqlite3VdbeIOTraceSql(Vdbe *p){
 ** request, then increment *pnByte by the amount of the request.
 */
 static void allocSpace(
-  char *pp,            /* IN/OUT: Set *pp to point to allocated buffer */
+  void **pp,           /* IN/OUT: Set *pp to point to allocated buffer */
   int nByte,           /* Number of bytes to allocate */
   u8 **ppFrom,         /* IN/OUT: Allocate from *ppFrom */
   u8 *pEnd,            /* Pointer to 1 byte past the end of *ppFrom buffer */
   int *pnByte          /* If allocation cannot be made, increment *pnByte */
 ){
   assert( EIGHT_BYTE_ALIGNMENT(*ppFrom) );
-  if( (*(void**)pp)==0 ){
+  if( (*pp)==0 ){
     nByte = ROUND8(nByte);
     if( &(*ppFrom)[nByte] <= pEnd ){
-      *(void**)pp = (void *)*ppFrom;
+      *pp = (void *)*ppFrom;
       *ppFrom += nByte;
     }else{
       *pnByte += nByte;
@@ -48552,14 +48552,25 @@ SQLITE_PRIVATE void sqlite3VdbeMakeReady(
     assert( EIGHT_BYTE_ALIGNMENT(zCsr) );
 
     do {
+      void *pp;
       nByte = 0;
-      allocSpace((char*)&p->aMem, nMem*sizeof(Mem), &zCsr, zEnd, &nByte);
-      allocSpace((char*)&p->aVar, nVar*sizeof(Mem), &zCsr, zEnd, &nByte);
-      allocSpace((char*)&p->apArg, nArg*sizeof(Mem*), &zCsr, zEnd, &nByte);
-      allocSpace((char*)&p->azVar, nVar*sizeof(char*), &zCsr, zEnd, &nByte);
-      allocSpace((char*)&p->apCsr, 
+      pp = p->aMem;
+      allocSpace(&pp, nMem*sizeof(Mem), &zCsr, zEnd, &nByte);
+      p->aMem = pp;
+      pp = p->aVar;
+      allocSpace(&pp, nVar*sizeof(Mem), &zCsr, zEnd, &nByte);
+      p->aVar = pp;
+      pp = p->apArg;
+      allocSpace(&pp, nArg*sizeof(Mem*), &zCsr, zEnd, &nByte);
+      p->apArg = pp;
+      pp = p->azVar;
+      allocSpace(&pp, nVar*sizeof(char*), &zCsr, zEnd, &nByte);
+      p->azVar = pp;
+      pp = p->apCsr;
+      allocSpace(&pp,
                  nCursor*sizeof(VdbeCursor*), &zCsr, zEnd, &nByte
       );
+      p->apCsr = pp;
       if( nByte ){
         p->pFree = sqlite3DbMallocZero(db, nByte);
       }
