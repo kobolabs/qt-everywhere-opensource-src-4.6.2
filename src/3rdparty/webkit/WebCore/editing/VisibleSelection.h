@@ -41,7 +41,7 @@ public:
 
     VisibleSelection();
 
-    VisibleSelection(bool selectOnlyLetters);
+    VisibleSelection(bool selectOnlyLettersAndNumbers);
 
     VisibleSelection(const Position&, EAffinity);
     VisibleSelection(const Position&, const Position&, EAffinity = SEL_DEFAULT_AFFINITY);
@@ -50,7 +50,7 @@ public:
     
     VisibleSelection(const VisiblePosition&);
     VisibleSelection(const VisiblePosition&, const VisiblePosition&);
-    VisibleSelection(const VisiblePosition&, bool selectOnlyLetters);
+    VisibleSelection(const VisiblePosition&, bool selectOnlyLettersAndNumbers);
 
     static VisibleSelection selectionFromContentsOfNode(Node*);
 
@@ -108,7 +108,7 @@ public:
 
     void setWithoutValidation(const Position&, const Position&);
 
-    void setSelectOnlyLetters(bool selectOnlyLetters) const { m_selectOnlyLetters = selectOnlyLetters; }
+    void setSelectOnlyLettersAndNumbers(bool selectOnlyLettersAndNumbers) const { m_selectOnlyLettersAndNumbers = selectOnlyLettersAndNumbers; }
 
 private:
     void validate();
@@ -132,7 +132,7 @@ private:
     SelectionType m_selectionType;    // None, Caret, Range
     bool m_baseIsFirst;               // true if base is before the extent
 
-    mutable bool m_selectOnlyLetters;
+    mutable bool m_selectOnlyLettersAndNumbers;
 };
 
 inline bool operator==(const VisibleSelection& a, const VisibleSelection& b)
