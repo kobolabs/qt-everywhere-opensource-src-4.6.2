@@ -47,6 +47,7 @@
 #include "private/qevent_p.h"
 #include "qgesture.h"
 #include "qevent.h"
+#include "qmenu.h"
 #include "qgraphicsitem.h"
 
 #ifdef Q_WS_MAC
@@ -451,7 +452,7 @@ bool QGestureManager::filterEvent(QWidget *receiver, QEvent *event)
         }
     }
     // find all gesture contexts for the widget tree
-    w = w->isWindow() ? 0 : w->parentWidget();
+    //w = w->isWindow() ? 0 : w->parentWidget();
     while (w)
     {
         for (ContextIterator it = w->d_func()->gestureContext.begin(),
@@ -588,6 +589,15 @@ void QGestureManager::deliverEvents(const QSet<QGesture *> &gestures,
                 if (context->isWidgetType())
                     target = static_cast<QWidget *>(context);
             }
+
+			// Found nothing, let's send the gesture to some top-level widget anyway!
+			if (!target)
+				target = QApplication::activeModalWidget();
+			if (!target)
+				target = QApplication::activePopupWidget();
+			if (!target)
+				target = QApplication::activeWindow();
+
             if (target)
                 m_gestureTargets.insert(gesture, target);
         }
