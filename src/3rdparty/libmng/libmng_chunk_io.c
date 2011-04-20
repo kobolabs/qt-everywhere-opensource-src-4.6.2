@@ -3659,7 +3659,7 @@ READ_CHUNK (mng_read_mhdr)
 #else
   if (pData->iSimplicity & 0x0000FC10)
 #endif
-//    MNG_ERROR (pData, MNG_MNGTOOCOMPLEX);
+    MNG_ERROR (pData, MNG_MNGTOOCOMPLEX);
                                        /* fits on maximum canvas ? */
   if ((pData->iWidth > pData->iMaxwidth) || (pData->iHeight > pData->iMaxheight))
     MNG_WARNING (pData, MNG_IMAGETOOLARGE);
