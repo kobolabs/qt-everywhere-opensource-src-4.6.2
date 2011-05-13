@@ -251,6 +251,7 @@ public:
 
 protected:
     static const QVector<QRgb> &grayPalette();
+    QFixed lastRightBearing(const QGlyphLayout &glyphs, bool round = false);
 
 private:
     struct GlyphCacheEntry {
