@@ -381,7 +381,7 @@ glyph_metrics_t QCoreTextFontEngine::boundingBox(const QGlyphLayout &glyphs)
     bool round = fontDef.styleStrategy & QFont::ForceIntegerMetrics;
     
     for (int i = 0; i < glyphs.numGlyphs; ++i) {
-        w += round ? glyphs.effectiveAdvance(i).round
+        w += round ? glyphs.effectiveAdvance(i).round()
 					: glyphs.effectiveAdvance(i);
 	}
     return glyph_metrics_t(0, -(ascent()), w - lastRightBearing(glyphs, round), ascent()+descent(), w, 0);
@@ -1380,6 +1380,7 @@ glyph_metrics_t QFontEngineMac::boundingBox(const QGlyphLayout &glyphs)
     for (int i = 0; i < glyphs.numGlyphs; ++i) {
         w += round ? glyphs.effectiveAdvance(i).round()
 					: glyphs.effectiveAdvance(i);
+	}
     return glyph_metrics_t(0, -(ascent()), w - lastRightBearing(glyphs, round), ascent()+descent(), w, 0);
 }
 
