@@ -5292,7 +5292,12 @@ void QUrl::removeEncodedQueryItem(const QByteArray &key)
 
 	    if (pos != 0 && query[pos-1] == d->pairDelimiter)
 	    {
-		    d->query.remove(pos - 1, end - pos);
+		    if (end == d->query.size()) {
+			d->query.remove(pos - 1, end - pos + 1);
+		    } else {
+			d->query.remove(pos - 1, end - pos);
+		    }
+
 	    } else {
 		    d->query.remove(pos, end - pos);
 	    }
