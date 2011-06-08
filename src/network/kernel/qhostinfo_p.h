@@ -153,6 +153,9 @@ protected:
     QMutex mutex;
 
     bool wasDeleted;
+
+private slots:
+    void waitForThreadPoolDone() { threadPool.waitForDone(); }
 };
 #endif
 
