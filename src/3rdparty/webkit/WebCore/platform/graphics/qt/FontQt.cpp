@@ -187,9 +187,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     if (!run.length())
         return 0;
     const QString string = fixSpacing(qstring(run));
-    QTextLayout layout(string, font());
-    QTextLine line = setupLayout(&layout, run);
-    int w = int(line.naturalTextWidth());
+    int w = QFontMetrics(font()).width(string);
     // WebKit expects us to ignore word spacing on the first character (as opposed to what Qt does)
     if (treatAsSpace(run[0]))
         w -= m_wordSpacing;
