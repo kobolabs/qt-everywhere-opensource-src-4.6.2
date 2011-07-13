@@ -3256,9 +3256,9 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
     "%3"
 #elif defined Q_OS_DARWIN
 #ifdef __i386__ || __x86_64__
-    "Intel Mac OS X"
+    "Intel Mac OS X %3"
 #else
-    "PPC Mac OS X"
+    "PPC Mac OS X %3"
 #endif
 
 #elif defined Q_OS_BSDI
@@ -3395,6 +3395,37 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
         case QSysInfo::WV_CE_6:
             ver = "Windows CE 6.x";
             break;
+    }
+    ua = QString(ua).arg(ver);
+#endif
+
+#if defined Q_OS_DARWIN
+    QString ver;
+    switch(qMacVersion()) {
+    case QSysInfo::MV_10_0:
+        ver = "10_0";
+        break;
+    case QSysInfo::MV_10_1:
+        ver = "10_1";
+        break;
+    case QSysInfo::MV_10_2:
+        ver = "10_2";
+        break;
+    case QSysInfo::MV_10_3:
+        ver = "10_3";
+        break;
+    case QSysInfo::MV_10_4:
+        ver = "10_4";
+        break;
+    case QSysInfo::MV_10_5:
+        ver = "10_5";
+        break;
+    case QSysInfo::MV_10_6:
+        ver = "10_6";
+        break;
+    default:
+        ver = "Unknown";
+        break;
     }
     ua = QString(ua).arg(ver);
 #endif
