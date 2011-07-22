@@ -751,6 +751,13 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
                 // Only justify text if whitespace is collapsed.
                 if (r->m_object->style()->collapseWhiteSpace()) {
                     spaceAdd = (availableWidth - totWidth) * spaces / numSpaces;
+                    // rwatson: when availableWidth is less than totalWidth
+                    // we sometimes underflow the division (curse you unsigned arithmetic!),
+                    // and hilarity ensues in the form of missing text.
+                    // Qt's trunk version handles this, so we may not need this fix in the future
+                    // (see http://trac.webkit.org/browser/trunk/Source/WebCore/rendering/RenderBlockLineLayout.cpp?rev=91057#L525)
+                    if (availableWidth < totWidth)
+                        spaceAdd = 0;
                     static_cast<InlineTextBox*>(r->m_box)->setSpaceAdd(spaceAdd);
                     totWidth += spaceAdd;
                 }
