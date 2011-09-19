@@ -2,7 +2,8 @@
 Up=KoboTouch.png
 Down=KoboTouchDown.png
 Screen=79 93 600 800
-Areas=1
+Areas=2
 HasMouseHover=false
 
 "Home"       0x1000010   322 998 431 1013
+"Power"      0x1000000	 592 1 690 40
