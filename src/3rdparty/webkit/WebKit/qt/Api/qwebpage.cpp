@@ -3423,6 +3423,9 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
     case QSysInfo::MV_10_6:
         ver = "10_6";
         break;
+    case QSysInfo::MV_10_7:
+        ver = "10_7";
+        break;
     default:
         ver = "Unknown";
         break;

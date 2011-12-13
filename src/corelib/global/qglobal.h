@@ -1478,6 +1478,7 @@ public:
         MV_10_4 = 0x0006,
         MV_10_5 = 0x0007,
         MV_10_6 = 0x0008,
+        MV_10_6 = 0x0009,
 
         /* codenames */
         MV_CHEETAH = MV_10_0,
@@ -1486,7 +1487,8 @@ public:
         MV_PANTHER = MV_10_3,
         MV_TIGER = MV_10_4,
         MV_LEOPARD = MV_10_5,
-        MV_SNOWLEOPARD = MV_10_6
+        MV_SNOWLEOPARD = MV_10_6,
+        MV_LION = MV_10_7
     };
     static const MacVersion MacintoshVersion;
 #endif
