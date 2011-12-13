@@ -1478,7 +1478,7 @@ public:
         MV_10_4 = 0x0006,
         MV_10_5 = 0x0007,
         MV_10_6 = 0x0008,
-        MV_10_6 = 0x0009,
+        MV_10_7 = 0x0009,
 
         /* codenames */
         MV_CHEETAH = MV_10_0,
