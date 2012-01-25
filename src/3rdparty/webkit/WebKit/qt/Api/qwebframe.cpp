@@ -1449,7 +1449,7 @@ QWebSecurityOrigin QWebFrame::securityOrigin() const
     return QWebSecurityOrigin(priv);
 }
 
-bool QWebFrame::selectionIntersectsElement(const QString &nodeName, const QString &className, QString &id)
+bool QWebFrame::selectionIntersectsElement(const QString &nodeName, const QString &className, const QString &retrievedAttribute, QString &id)
 {
 	ExceptionCode ec = 0;
 	PassRefPtr<Range> range = QWebFramePrivate::core(this)->domWindow()->getSelection()->getRangeAt(0, ec);
@@ -1464,8 +1464,15 @@ bool QWebFrame::selectionIntersectsElement(const QString &nodeName, const QStrin
 			element = node->parentElement();
 		}
 		if (element && !QString::compare(nodeName, element->nodeName(), Qt::CaseInsensitive) && element->hasAttribute("class") && !QString::compare(className, element->getAttribute("class"))) {
-			Q_ASSERT(element->hasAttribute("id"));
-			id = element->getAttribute("id");
+			if (!retrievedAttribute.isEmpty()) {
+				if (element->hasAttribute(retrievedAttribute)) {
+					id = element->getAttribute(retrievedAttribute);
+				}
+				else {
+					qDebug() << "ERROR: Requested attribute" << retrievedAttribute << "of DOM element" << nodeName << "was not found!";
+					return false;
+				}
+			}
 			return true;
 		}
 		if( node == range->endContainer() ) {
