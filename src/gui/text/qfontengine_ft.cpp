@@ -220,11 +220,15 @@ QFreetypeFace *QFreetypeFace::getFace(const QFontEngine::FaceId &face_id)
             newFreetype->fontData = qt_fontdata_from_index(idx.toInt(&ok));
             if (!ok)
                 newFreetype->fontData = QByteArray();
-        } else if (!(file.fileEngine()->fileFlags(QAbstractFileEngine::FlagsMask) & QAbstractFileEngine::LocalDiskFlag)) {
+        } else if ((file.fileEngine()->fileFlags(QAbstractFileEngine::FlagsMask) & QAbstractFileEngine::LocalDiskFlag)) {
             if (!file.open(QIODevice::ReadOnly)) {
                 return 0;
             }
-            newFreetype->fontData = file.readAll();
+            if (QFontDatabase::decryptFontData != NULL) {
+                newFreetype->fontData = QFontDatabase::decryptFontData(file);
+            } else {
+                newFreetype->fontData = file.readAll();
+            }
         }
         if (!newFreetype->fontData.isEmpty()) {
             if (FT_New_Memory_Face(freetypeData->library, (const FT_Byte *)newFreetype->fontData.constData(), newFreetype->fontData.size(), face_id.index, &face)) {

@@ -85,6 +85,8 @@ QT_BEGIN_NAMESPACE
 
 extern int qt_defaultDpiY(); // in qfont.cpp
 
+QFontDatabase::decryptor QFontDatabase::decryptFontData = NULL;
+
 bool qt_enable_test_font = false;
 
 Q_AUTOTEST_EXPORT void qt_setQtEnableTestFont(bool value)
@@ -781,10 +783,17 @@ QStringList QFontDatabasePrivate::addTTFile(const QByteArray &file, const QByteA
     int index = 0;
     int numFaces = 0;
     do {
+        QByteArray data(fontData);
         FT_Face face;
         FT_Error error;
-        if (!fontData.isEmpty()) {
-            error = FT_New_Memory_Face(library, (const FT_Byte *)fontData.constData(), fontData.size(), index, &face);
+        if (!file.startsWith(":qmemoryfonts") && QFontDatabase::decryptFontData != NULL) {
+            QFile f(QString::fromUtf8(file));
+            f.open(QIODevice::ReadOnly);
+            data = QFontDatabase::decryptFontData(f);
+            f.close();
+        }
+        if (!data.isEmpty()) {
+            error = FT_New_Memory_Face(library, (const FT_Byte *)data.constData(), data.size(), index, &face);
         } else {
             error = FT_New_Face(library, file, index, &face);
         }
